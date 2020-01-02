@@ -1,5 +1,6 @@
 package bgu.spl.net.srv;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,13 +16,27 @@ public class ConnectionsImpl<T> implements Connections<T> {
         return ConnectionHolder.instance;
     }
 
-    public synchronized boolean send(int connectionId, T msg) {
+    public boolean send(int connectionId, T msg) {
         ConnectionHandler<T> client = activeConnections.get(connectionId);
         try {
             client.send(msg);
             return true;
         } catch (Exception e) { //TODO fix exception
             return false;
+        }
+    }
+
+    public void send(String channel, T msg) { //TODO implement this
+
+    }
+
+    public void disconnect(int connectionId) {
+        ConnectionHandler<T> client = activeConnections.get(connectionId);
+        activeConnections.remove(client);
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
