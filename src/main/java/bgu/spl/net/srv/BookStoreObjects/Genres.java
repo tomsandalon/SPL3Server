@@ -1,4 +1,4 @@
-package BookStoreObjects;
+package bgu.spl.net.srv.BookStoreObjects;
 
 import java.util.HashMap;
 import java.util.Map;

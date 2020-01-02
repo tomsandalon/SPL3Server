@@ -1,4 +1,4 @@
-package BookStoreObjects;
+package bgu.spl.net.srv.BookStoreObjects;
 
 import java.util.LinkedList;
 import java.util.List;
