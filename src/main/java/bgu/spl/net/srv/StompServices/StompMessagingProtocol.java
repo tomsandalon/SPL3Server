@@ -1,6 +1,8 @@
 package bgu.spl.net.srv.StompServices;
 
 import bgu.spl.net.StompObject.Client.*;
+import bgu.spl.net.StompObject.Server.Connected;
+import bgu.spl.net.StompObject.Server.Error;
 import bgu.spl.net.api.MessagingProtocol;
 
 public class StompMessagingProtocol implements MessagingProtocol<String> {
@@ -13,9 +15,7 @@ public class StompMessagingProtocol implements MessagingProtocol<String> {
         String result;
         switch (type) {
             case "CONNECT":
-                result = process(new Connect(msg));
-                //TODO
-                break;
+                return process(new Connect(msg));
             case "DISCONNECT":
                 shouldTerminate = true;
                 result = process(new Disconnect(msg));
@@ -46,22 +46,29 @@ public class StompMessagingProtocol implements MessagingProtocol<String> {
     }
 
     private String process(Connect connect) {
+        String s = ServerData.getInstance().login(connect.getAcceptVersion(), connect.getLogin(), connect.getPasscode());
+        if (s.equals("CONNECTED")) {
+            Connected connected = new Connected(connect.getAcceptVersion());
+            return connected.toString();
+        } else {
+            Error error = new Error("Connect has no receipt id", s, connect, "s");
+            return error.toString();
+        }
+    }
+
+    private String process(Disconnect disconnect) { //TODO
         return null;
     }
 
-    private String process(Disconnect disconnect) {
+    private String process(Send send) { //TODO
         return null;
     }
 
-    private String process(Send send) {
+    private String process(Subscribe subscribe) { //TODO
         return null;
     }
 
-    private String process(Subscribe subscribe) {
-        return null;
-    }
-
-    private String process(Unsubscribe unsubscribe) {
+    private String process(Unsubscribe unsubscribe) { //TODO
         return null;
     }
 }
