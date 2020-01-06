@@ -8,6 +8,14 @@ public class Send extends StompMessage {
     private String dest;
     private String msg;
 
+    public String getDest() {
+        return dest;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
     public Send(String completeMsg) {
         super("SEND");
         ArrayList<String> tempStringArray = new ArrayList<>();
@@ -16,7 +24,7 @@ public class Send extends StompMessage {
         }
         dest = getAfterChar(tempStringArray.get(1), ':');
         msg = "";
-        i = 3;
+        int i = 3;
         while (i < tempStringArray.size()){
             msg = msg + tempStringArray.get(i);
             if (tempStringArray.get(i).equals("^@")){
