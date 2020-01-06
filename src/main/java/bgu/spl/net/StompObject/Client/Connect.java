@@ -2,12 +2,15 @@ package bgu.spl.net.StompObject.Client;
 
 import bgu.spl.net.StompObject.StompMessage;
 
-public class Connect extends StompMessage {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Connect extends StompMessage implements ClientStompMessage {
 
     private String acceptVersion;
     private String host;
     private String login;
-    private String password;
+    private String passcode;
 
     public String getAcceptVersion() {
         return acceptVersion;
@@ -21,15 +24,33 @@ public class Connect extends StompMessage {
         return login;
     }
 
-    public String getPassword() {
-        return password;
+    public Connect(String completeMsg) {
+        super("CONNECT");
+        ArrayList<String> tempStringArray = new ArrayList<>();
+        tempStringArray.addAll(Arrays.asList(completeMsg.split("\n")));
+        acceptVersion = getAfterChar(tempStringArray.get(1), ':');
+        host = getAfterChar(tempStringArray.get(2), ':');
+        login = getAfterChar(tempStringArray.get(3), ':');
+        passcode = getAfterChar(tempStringArray.get(4), ':');
     }
 
-    public Connect(String completeMessage){
-        super("CONNECT");
-        acceptVersion = getAfterChar(getHeaderAt(1), ':');
-        host = getAfterChar(getHeaderAt(2), ':');
-        login = getAfterChar(getHeaderAt(3), ':');
-        password = getAfterChar(getHeaderAt(4), ':');
+    public String getPasscode() {
+        return passcode;
+    }
+
+    @Override
+    public String toString() {
+        return getType() + "\naccept-version:" + getAcceptVersion() + "\nhost:" + getHost() + "\nlogin:" + getLogin() + "\npasscode:" + getPasscode() + "\n" + endOfStomp();
+    }
+
+    @Override
+    public boolean isValid(String s) {
+        ArrayList<String> tempStringArray = toArrayList(s);
+        if (!tempStringArray.get(1).startsWith("accept-version:")) return false;
+        if (!tempStringArray.get(2).startsWith("host:")) return false;
+        if (!tempStringArray.get(3).startsWith("login:")) return false;
+        if (!tempStringArray.get(4).startsWith("passcode:")) return false;
+        if (!tempStringArray.get(5).equals("")) return false;
+        return tempStringArray.get(6).equals(endOfStomp());
     }
 }

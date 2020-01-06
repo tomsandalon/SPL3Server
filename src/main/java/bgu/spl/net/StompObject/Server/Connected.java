@@ -2,8 +2,6 @@ package bgu.spl.net.StompObject.Server;
 
 import bgu.spl.net.StompObject.StompMessage;
 
-import java.util.ArrayList;
-
 public class Connected extends StompMessage {
 
     private String version;
@@ -12,8 +10,13 @@ public class Connected extends StompMessage {
         return version;
     }
 
-    public Connected(String version){
+    public Connected(String version) {
         super("CONNECTED");
         this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return getType() + "\nversion:" + getVersion() + "\n" + endOfStomp();
     }
 }

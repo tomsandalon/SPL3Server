@@ -2,8 +2,6 @@ package bgu.spl.net.StompObject.Server;
 
 import bgu.spl.net.StompObject.StompMessage;
 
-import java.util.ArrayList;
-
 public class Error extends StompMessage{
 
     private String receiptID;
@@ -33,5 +31,10 @@ public class Error extends StompMessage{
         this.message = message;
         this.stompMessage = stompMessage;
         this.messageDesc = messageDesc;
+    }
+
+    @Override
+    public String toString() {
+        return getType() + "\nreceipt-id: " + getReceiptID() + "\nmessage: " + getMessage() + "\n\nThe message:\n-----\n" + stompMessage.toString() + "\n-----\n" + getMessageDesc() + endOfStomp();
     }
 }

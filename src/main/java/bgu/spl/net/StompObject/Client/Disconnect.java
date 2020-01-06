@@ -1,11 +1,11 @@
 package bgu.spl.net.StompObject.Client;
 
-import bgu.spl.net.StompObject.Server.Receipt;
 import bgu.spl.net.StompObject.StompMessage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class Disconnect extends StompMessage {
+public class Disconnect extends StompMessage implements ClientStompMessage {
 
     private String receipt;
 
@@ -13,12 +13,23 @@ public class Disconnect extends StompMessage {
         return receipt;
     }
 
-    public Receipt(String completeMsg){
+    public Disconnect(String completeMsg) {
         super("DISCONNECT");
         ArrayList<String> tempStringArray = new ArrayList<>();
-        for (String s : completeMsg.split("\n")){
-            tempStringArray.add(s);
-        }
+        tempStringArray.addAll(Arrays.asList(completeMsg.split("\n")));
         receipt = getAfterChar(tempStringArray.get(1), ':');
+    }
+
+    @Override
+    public String toString() {
+        return getType() + "\nreceipt:" + getReceipt() + "\n" + endOfStomp();
+    }
+
+    @Override
+    public boolean isValid(String s) {
+        ArrayList<String> tempStringArray = toArrayList(s);
+        if (!tempStringArray.get(1).startsWith("receipt:")) return false;
+        if (!tempStringArray.get(2).equals("")) return false;
+        return tempStringArray.get(3).equals(endOfStomp());
     }
 }

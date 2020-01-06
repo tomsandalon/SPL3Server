@@ -1,6 +1,7 @@
 package bgu.spl.net.StompObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class StompMessage {
 
@@ -15,7 +16,7 @@ public abstract class StompMessage {
         this.type = type;
     }
 
-    public String getAfterChar(String s, char c){
+    public String getAfterChar(String s, char c) {
         int loc = s.indexOf(c);
         return s.substring(loc);
     }
@@ -23,4 +24,11 @@ public abstract class StompMessage {
     @Override
     public abstract String toString();
 
+    public String endOfStomp() {
+        return "\n^@";
+    }
+
+    public ArrayList<String> toArrayList(String s) {
+        return new ArrayList<>(Arrays.asList(s.split("\n")));
+    }
 }
