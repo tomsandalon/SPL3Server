@@ -35,6 +35,6 @@ public class Message extends StompMessage {
 
     @Override
     public String toString() {
-        return getType() + "\nsubscription:" + getSubscription() + "\nMessage-id:" + getMessageID() + "\ndestination:" + getDest() + "\n\n" + getMessage() + endOfStomp();
+        return getType() + "\nsubscription:" + getSubscription() + "\nMessage-id:" + getMessageID() + "\ndestination:" + getDest() + "\n\n" + getMessage();
     }
 }

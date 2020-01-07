@@ -17,6 +17,6 @@ public class Connected extends StompMessage {
 
     @Override
     public String toString() {
-        return getType() + "\nversion:" + getVersion() + "\n" + endOfStomp();
+        return getType() + "\nversion:" + getVersion() + "\n";
     }
 }

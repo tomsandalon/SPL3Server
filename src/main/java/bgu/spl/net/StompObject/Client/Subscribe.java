@@ -28,7 +28,7 @@ public class Subscribe extends StompMessage implements ClientStompMessage {
 
     @Override
     public String toString() {
-        return getType() + "\ndestination:" + getDest() + "\nid:" + getId() + "\n" + endOfStomp();
+        return getType() + "\ndestination:" + getDest() + "\nid:" + getId() + "\n";
     }
 
     @Override
@@ -36,7 +36,6 @@ public class Subscribe extends StompMessage implements ClientStompMessage {
         ArrayList<String> tempStringArray = toArrayList(s);
         if (!tempStringArray.get(1).startsWith("destination:")) return false;
         if (!tempStringArray.get(2).startsWith("id:")) return false;
-        if (!tempStringArray.get(3).equals("")) return false;
-        return tempStringArray.get(4).equals(endOfStomp());
+        return tempStringArray.get(3).equals("");
     }
 }

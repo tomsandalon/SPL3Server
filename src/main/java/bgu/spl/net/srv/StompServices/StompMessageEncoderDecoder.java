@@ -2,70 +2,44 @@ package bgu.spl.net.srv.StompServices;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 
-import java.io.*;
-import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class StompMessageEncoderDecoder implements MessageEncoderDecoder<String> {
 
-    private final int BUFFER_SIZE = 4;
-    private final ByteBuffer lengthBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-    private byte[] objectBytes = null;
-    private int objectBytesIndex = 0;
+    private byte[] bytes = new byte[1 << 10]; //start with 1k
+    private int len = 0;
 
     @Override
     public String decodeNextByte(byte nextByte) {
-        if (objectBytes == null) {
-            lengthBuffer.put(nextByte);
-            if (!lengthBuffer.hasRemaining()) {
-                lengthBuffer.flip();
-                objectBytes = new byte[lengthBuffer.getInt()];
-                objectBytesIndex = 0;
-                lengthBuffer.clear();
-            }
-        } else {
-            objectBytes[objectBytesIndex] = nextByte;
-            if (++objectBytesIndex == objectBytes.length) {
-                String result = deserializeObject();
-                objectBytes = null;
-                return result;
-            }
+        //notice that the top 128 ascii characters have the same representation as their utf-8 counterparts
+        //this allow us to do the following comparison
+        if (nextByte == '\u0000') {
+            return popString();
         }
-        return null;
+
+        pushByte(nextByte);
+        return null; //not a full message yet
     }
 
     @Override
     public byte[] encode(String message) {
-        return serializeObject(message);
+        return (message + "\u0000").getBytes(); //uses utf8 by default
     }
 
-    private String deserializeObject() {
-        try {
-            ObjectInput in = new ObjectInputStream(new ByteArrayInputStream(objectBytes));
-            return (String) in.readObject();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Cannot deserialize this object", e);
+    private void pushByte(byte nextByte) {
+        if (len >= bytes.length) {
+            bytes = Arrays.copyOf(bytes, len * 2);
         }
+
+        bytes[len++] = nextByte;
     }
 
-    private byte[] serializeObject(String message) {
-        try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-
-            for (int i = 0; i < BUFFER_SIZE; i++) {
-                bytes.write(0);
-            }
-
-            ObjectOutput out = new ObjectOutputStream(bytes);
-            out.writeObject(message);
-            out.flush();
-            byte[] result = bytes.toByteArray();
-
-            //now write the object size
-            ByteBuffer.wrap(result).putInt(result.length - BUFFER_SIZE);
-            return result;
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("cannot serialize object", e);
-        }
+    private String popString() {
+        //notice that we explicitly requesting that the string will be decoded from UTF-8
+        //this is not actually required as it is the default encoding in java.
+        String result = new String(bytes, 0, len, StandardCharsets.UTF_8);
+        len = 0;
+        return result;
     }
 }

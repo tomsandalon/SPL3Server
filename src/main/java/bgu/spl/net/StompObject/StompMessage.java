@@ -24,10 +24,6 @@ public abstract class StompMessage {
     @Override
     public abstract String toString();
 
-    public String endOfStomp() {
-        return "\n^@";
-    }
-
     public ArrayList<String> toArrayList(String s) {
         return new ArrayList<>(Arrays.asList(s.split("\n")));
     }

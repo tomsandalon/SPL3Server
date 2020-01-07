@@ -40,7 +40,7 @@ public class Connect extends StompMessage implements ClientStompMessage {
 
     @Override
     public String toString() {
-        return getType() + "\naccept-version:" + getAcceptVersion() + "\nhost:" + getHost() + "\nlogin:" + getLogin() + "\npasscode:" + getPasscode() + "\n" + endOfStomp();
+        return getType() + "\naccept-version:" + getAcceptVersion() + "\nhost:" + getHost() + "\nlogin:" + getLogin() + "\npasscode:" + getPasscode() + "\n";
     }
 
     @Override
@@ -50,7 +50,6 @@ public class Connect extends StompMessage implements ClientStompMessage {
         if (!tempStringArray.get(2).startsWith("host:")) return false;
         if (!tempStringArray.get(3).startsWith("login:")) return false;
         if (!tempStringArray.get(4).startsWith("passcode:")) return false;
-        if (!tempStringArray.get(5).equals("")) return false;
-        return tempStringArray.get(6).equals(endOfStomp());
+        return tempStringArray.get(5).equals("");
     }
 }

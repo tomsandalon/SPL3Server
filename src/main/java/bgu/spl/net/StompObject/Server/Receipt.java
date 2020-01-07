@@ -17,6 +17,6 @@ public class Receipt extends StompMessage {
 
     @Override
     public String toString() {
-        return getType() + "\nreceipt-id:" + getReceiptID() + "\n" + endOfStomp();
+        return getType() + "\nreceipt-id:" + getReceiptID() + "\n";
     }
 }

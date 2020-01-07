@@ -36,14 +36,13 @@ public class Send extends StompMessage implements ClientStompMessage {
 
     @Override
     public String toString() {
-        return getType() + "\ndestination" + getDest() + "\n\n" + getMsg() + endOfStomp();
+        return getType() + "\ndestination" + getDest() + "\n\n" + getMsg();
     }
 
     @Override
     public boolean isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
         if (!tempStringArray.get(1).startsWith("destination:")) return false;
-        if (!tempStringArray.get(2).equals("")) return false;
-        return tempStringArray.get(tempStringArray.size() - 1).equals(endOfStomp());
+        return tempStringArray.get(2).equals("");
     }
 }

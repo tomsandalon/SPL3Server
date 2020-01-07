@@ -35,6 +35,6 @@ public class Error extends StompMessage{
 
     @Override
     public String toString() {
-        return getType() + "\nreceipt-id: " + getReceiptID() + "\nmessage: " + getMessage() + "\n\nThe message:\n-----\n" + stompMessage.toString() + "\n-----\n" + getMessageDesc() + endOfStomp();
+        return getType() + "\nreceipt-id: " + getReceiptID() + "\nmessage: " + getMessage() + "\n\nThe message:\n-----\n" + stompMessage.toString() + "\n-----\n" + getMessageDesc();
     }
 }

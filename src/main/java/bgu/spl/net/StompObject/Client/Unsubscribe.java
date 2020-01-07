@@ -22,14 +22,13 @@ public class Unsubscribe extends StompMessage implements ClientStompMessage {
 
     @Override
     public String toString() {
-        return getType() + "\nid:" + getId() + "\n" + endOfStomp();
+        return getType() + "\nid:" + getId() + "\n";
     }
 
     @Override
     public boolean isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
         if (!tempStringArray.get(1).startsWith("id:")) return false;
-        if (!tempStringArray.get(2).equals("")) return false;
-        return tempStringArray.get(3).equals(endOfStomp());
+        return tempStringArray.get(2).equals("");
     }
 }

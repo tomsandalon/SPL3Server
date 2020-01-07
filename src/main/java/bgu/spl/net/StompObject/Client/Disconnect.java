@@ -22,14 +22,13 @@ public class Disconnect extends StompMessage implements ClientStompMessage {
 
     @Override
     public String toString() {
-        return getType() + "\nreceipt:" + getReceipt() + "\n" + endOfStomp();
+        return getType() + "\nreceipt:" + getReceipt() + "\n";
     }
 
     @Override
     public boolean isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
         if (!tempStringArray.get(1).startsWith("receipt:")) return false;
-        if (!tempStringArray.get(2).equals("")) return false;
-        return tempStringArray.get(3).equals(endOfStomp());
+        return tempStringArray.get(2).equals("");
     }
 }
