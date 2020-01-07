@@ -1,7 +1,7 @@
 package bgu.spl.net.srv;
 
-import bgu.spl.net.api.MessageEncoderDecoder;
-import bgu.spl.net.api.MessagingProtocol;
+import bgu.spl.net.srv.StompServices.StompMessageEncoderDecoder;
+import bgu.spl.net.srv.StompServices.StompMessagingProtocolImpl;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -11,19 +11,18 @@ import java.util.function.Supplier;
 public abstract class BaseServer<T> implements Server<T> {
 
     private final int port;
-    private final Supplier<MessagingProtocol<T>> protocolFactory;
-    private final Supplier<MessageEncoderDecoder<T>> encdecFactory;
+    private final Supplier<StompMessagingProtocolImpl> protocolFactory;
+    private final Supplier<StompMessageEncoderDecoder> encdecFactory;
     private ServerSocket sock;
+    private Connections<T> connections;
 
-    public BaseServer(
-            int port,
-            Supplier<MessagingProtocol<T>> protocolFactory,
-            Supplier<MessageEncoderDecoder<T>> encdecFactory) {
+    public BaseServer(int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encdecFactory) {
 
         this.port = port;
         this.protocolFactory = protocolFactory;
         this.encdecFactory = encdecFactory;
         this.sock = null;
+        this.connections = new ConnectionsImpl<>();
     }
 
     @Override
@@ -38,14 +37,13 @@ public abstract class BaseServer<T> implements Server<T> {
 
                 Socket clientSock = serverSock.accept();
 
-                BlockingConnectionHandler<T> handler = new BlockingConnectionHandler<>(
-                        clientSock,
-                        encdecFactory.get(),
-                        protocolFactory.get());
+                BlockingConnectionHandler<T> handler = new BlockingConnectionHandler<>(clientSock, encdecFactory.get(), protocolFactory.get());
+
+                connections.getConnectionHandlerId().put(connections.getAndIncConnectionCounter(), handler);
 
                 execute(handler);
             }
-        } catch (IOException ex) {
+        } catch (IOException ignored) {
         }
 
         System.out.println("server closed!!!");
@@ -53,10 +51,11 @@ public abstract class BaseServer<T> implements Server<T> {
 
     @Override
     public void close() throws IOException {
-        if (sock != null)
-            sock.close();
+        if (sock != null) sock.close();
     }
 
-    protected abstract void execute(BlockingConnectionHandler<T> handler);
+    protected void execute(BlockingConnectionHandler<T> handler) {
+        handler.run();
+    }
 
 }

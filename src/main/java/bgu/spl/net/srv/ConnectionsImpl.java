@@ -1,7 +1,5 @@
 package bgu.spl.net.srv;
 
-import jdk.internal.net.http.common.Pair;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,21 +7,29 @@ import java.util.Map;
 
 public class ConnectionsImpl<T> implements Connections<T> {
 
-    private final String ACCEPT_VERSION = "1.2";
     private Map<Pair<String, String>, String> connectionSubId = new HashMap<>();
     private Map<String, String> userCredentials = new HashMap<>();
     private List<String> loggedUsers = new ArrayList<>();
     private List<Pair<String, Integer>> userConnectionId = new ArrayList<>();
     private Map<Integer, ConnectionHandler<T>> connectionHandlerId = new HashMap<>();
     private int msgSent = 0;
+    private int connectionCount = 0;
 
     public List<Pair<String, Integer>> getUserConnectionId() {
         return userConnectionId;
     }
 
+    @Override
+
     public synchronized int getAndIncMsgCounter() {
         this.msgSent++;
         return msgSent - 1;
+    }
+
+    @Override
+    public synchronized int getAndIncConnectionCounter() {
+        this.connectionCount++;
+        return connectionCount - 1;
     }
 
     @Override
@@ -76,7 +82,8 @@ public class ConnectionsImpl<T> implements Connections<T> {
 
     @Override
     public String tryConnect(String acceptVersion, String username, String passcode, int connectionId) {
-        if (!this.ACCEPT_VERSION.equals(acceptVersion)) return "Wrong accept-version";
+        String serverVersion = "1.2";
+        if (!serverVersion.equals(acceptVersion)) return "Wrong accept-version";
         for (String user : userCredentials.keySet()) {
             if (user.equals(username)) {
                 if (userCredentials.get(user).equals(passcode)) {

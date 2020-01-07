@@ -1,7 +1,5 @@
 package bgu.spl.net.srv;
 
-import jdk.internal.net.http.common.Pair;
-
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +22,8 @@ public interface Connections<T> {
     Map<Integer, ConnectionHandler<T>> getConnectionHandlerId();
 
     int getAndIncMsgCounter();
+
+    int getAndIncConnectionCounter();
 
     List<Pair<String, Integer>> getUserConnectionId();
 }

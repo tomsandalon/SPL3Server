@@ -7,7 +7,7 @@ import bgu.spl.net.StompObject.Server.Message;
 import bgu.spl.net.StompObject.Server.Receipt;
 import bgu.spl.net.api.StompMessagingProtocol;
 import bgu.spl.net.srv.Connections;
-import jdk.internal.net.http.common.Pair;
+import bgu.spl.net.srv.Pair;
 
 public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
