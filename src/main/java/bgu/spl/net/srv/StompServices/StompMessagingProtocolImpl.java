@@ -93,6 +93,6 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
     }
 
     private void process(Unsubscribe unsubscribe) {
-        connections.unsubscribe(unsubscribe);
+        connections.unsubscribe(unsubscribe.getId(), connectionId);
     }
 }

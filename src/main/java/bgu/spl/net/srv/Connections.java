@@ -1,6 +1,5 @@
 package bgu.spl.net.srv;
 
-import bgu.spl.net.StompObject.Client.Unsubscribe;
 import jdk.internal.net.http.common.Pair;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public interface Connections<T> {
 
     void subscribe(String dest, String id, int connectionId);
 
-    void unsubscribe(Unsubscribe unsubscribe);
+    void unsubscribe(String id, int connectionId);
 
     Map<Integer, ConnectionHandler<T>> getConnectionHandlerId();
 

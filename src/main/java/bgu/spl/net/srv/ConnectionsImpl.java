@@ -1,6 +1,5 @@
 package bgu.spl.net.srv;
 
-import bgu.spl.net.StompObject.Client.Unsubscribe;
 import jdk.internal.net.http.common.Pair;
 
 import java.util.ArrayList;
@@ -99,14 +98,27 @@ public class ConnectionsImpl<T> implements Connections<T> {
         return "CONNECTED";
     }
 
+
     @Override
     public void subscribe(String dest, String id, int connectionId) {
-
+        for (Pair<String, Integer> userConnection : userConnectionId) {
+            if (userConnection.second == connectionId) {
+                connectionSubId.put(new Pair<>(userConnection.first, dest), id);
+                break;
+            }
+        }
     }
 
     @Override
-    public void unsubscribe(Unsubscribe unsubscribe) {
-
+    public void unsubscribe(String id, int connectionId) {
+        Pair<String, String> remove = null;
+        for (Pair<String, String> findToRemove : connectionSubId.keySet()) {
+            if (connectionSubId.get(findToRemove).equals(id)) {
+                remove = findToRemove;
+                break;
+            }
+        }
+        connectionSubId.remove(remove);
     }
 
     @Override
