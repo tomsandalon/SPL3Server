@@ -32,10 +32,10 @@ public class Subscribe extends StompMessage implements ClientStompMessage {
     }
 
     @Override
-    public boolean isValid(String s) {
+    public String isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
-        if (!tempStringArray.get(1).startsWith("destination:")) return false;
-        if (!tempStringArray.get(2).startsWith("id:")) return false;
-        return tempStringArray.get(3).equals("");
+        if (!tempStringArray.get(1).startsWith("destination:")) return "destination is invalid";
+        if (!tempStringArray.get(2).startsWith("id:")) return "id is invalid";
+        return "";
     }
 }

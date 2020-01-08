@@ -40,9 +40,9 @@ public class Send extends StompMessage implements ClientStompMessage {
     }
 
     @Override
-    public boolean isValid(String s) {
+    public String isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
-        if (!tempStringArray.get(1).startsWith("destination:")) return false;
-        return tempStringArray.get(2).equals("");
+        if (!tempStringArray.get(1).startsWith("destination:")) return "Destination is invalid";
+        return "";
     }
 }

@@ -26,9 +26,9 @@ public class Disconnect extends StompMessage implements ClientStompMessage {
     }
 
     @Override
-    public boolean isValid(String s) {
+    public String isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
-        if (!tempStringArray.get(1).startsWith("receipt:")) return false;
-        return tempStringArray.get(2).equals("");
+        if (!tempStringArray.get(1).startsWith("receipt:")) return "Invalid receipt";
+        return "";
     }
 }

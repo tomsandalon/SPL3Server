@@ -44,12 +44,12 @@ public class Connect extends StompMessage implements ClientStompMessage {
     }
 
     @Override
-    public boolean isValid(String s) {
+    public String isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
-        if (!tempStringArray.get(1).startsWith("accept-version:")) return false;
-        if (!tempStringArray.get(2).startsWith("host:")) return false;
-        if (!tempStringArray.get(3).startsWith("login:")) return false;
-        if (!tempStringArray.get(4).startsWith("passcode:")) return false;
-        return tempStringArray.get(5).equals("");
+        if (!tempStringArray.get(1).startsWith("accept-version:")) return "Accept version is invalid";
+        if (!tempStringArray.get(2).startsWith("host:")) return "Host is invalid";
+        if (!tempStringArray.get(3).startsWith("login:")) return "login is invalid";
+        if (!tempStringArray.get(4).startsWith("passcode:")) return "passcode is invalid";
+        return "";
     }
 }
