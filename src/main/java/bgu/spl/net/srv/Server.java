@@ -14,14 +14,14 @@ public interface Server<T> extends Closeable {
      * @param port                  The port for the server socket
      * @param protocolFactory       A factory that creats new MessagingProtocols
      * @param encoderDecoderFactory A factory that creats new MessageEncoderDecoder
-     * @param <T>                   The Message Object for the protocol
+     *
      * @return A new Thread per client server
      */
-    public static <T> Server<T> threadPerClient(int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
+    public static Server<String> threadPerClient(int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
 
-        return new BaseServer<T>(port, protocolFactory, encoderDecoderFactory) {
+        return new BaseServer(port, protocolFactory, encoderDecoderFactory) {
             @Override
-            protected void execute(BlockingConnectionHandler<T> handler) {
+            protected void execute(BlockingConnectionHandler<String> handler) {
                 new Thread(handler).start();
             }
         };

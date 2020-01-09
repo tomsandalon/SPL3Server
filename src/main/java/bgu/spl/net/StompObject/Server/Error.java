@@ -29,10 +29,6 @@ public class Error extends StompMessage{
         return messageDesc;
     }
 
-    public String getFullMessage() {
-        return stompMessage;
-    }
-
     @Override
     public String toString() {
         return getType() + "\nreceipt-id: " + getReceiptID() + "\nmessage: " + getMessage() + "\n\nThe message:\n-----\n" + fullMessage + "\n-----\n" + getMessageDesc();
