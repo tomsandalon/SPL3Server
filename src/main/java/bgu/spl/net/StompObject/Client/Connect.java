@@ -5,7 +5,7 @@ import bgu.spl.net.StompObject.StompMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Connect extends StompMessage implements ClientStompMessage {
+public class Connect extends StompMessage {
 
     private String acceptVersion;
     private String host;
@@ -43,8 +43,7 @@ public class Connect extends StompMessage implements ClientStompMessage {
         return getType() + "\naccept-version:" + getAcceptVersion() + "\nhost:" + getHost() + "\nlogin:" + getLogin() + "\npasscode:" + getPasscode() + "\n";
     }
 
-    @Override
-    public String isValid(String s) {
+    public static String isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
         if (!tempStringArray.get(1).startsWith("accept-version:")) return "Accept version is invalid";
         if (!tempStringArray.get(2).startsWith("host:")) return "Host is invalid";

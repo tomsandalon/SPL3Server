@@ -5,7 +5,7 @@ import bgu.spl.net.StompObject.StompMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Subscribe extends StompMessage implements ClientStompMessage {
+public class Subscribe extends StompMessage {
 
     private String dest;
     private String id;
@@ -31,8 +31,7 @@ public class Subscribe extends StompMessage implements ClientStompMessage {
         return getType() + "\ndestination:" + getDest() + "\nid:" + getId() + "\n";
     }
 
-    @Override
-    public String isValid(String s) {
+    public static String isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
         if (!tempStringArray.get(1).startsWith("destination:")) return "destination is invalid";
         if (!tempStringArray.get(2).startsWith("id:")) return "id is invalid";

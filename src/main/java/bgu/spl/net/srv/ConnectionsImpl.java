@@ -1,17 +1,19 @@
 package bgu.spl.net.srv;
 
+import bgu.spl.net.srv.Utils.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectionsImpl<T> implements Connections<T> {
+public class ConnectionsImpl implements Connections<String> {
 
     private Map<Pair<String, String>, String> connectionSubId = new HashMap<>();
     private Map<String, String> userCredentials = new HashMap<>();
     private List<String> loggedUsers = new ArrayList<>();
     private List<Pair<String, Integer>> userConnectionId = new ArrayList<>();
-    private Map<Integer, ConnectionHandler<T>> connectionHandlerId = new HashMap<>();
+    private Map<Integer, ConnectionHandler<String>> connectionHandlerId = new HashMap<>();
     private int msgSent = 0;
     private int connectionCount = 0;
 
@@ -20,7 +22,6 @@ public class ConnectionsImpl<T> implements Connections<T> {
     }
 
     @Override
-
     public synchronized int getAndIncMsgCounter() {
         this.msgSent++;
         return msgSent - 1;
@@ -33,8 +34,8 @@ public class ConnectionsImpl<T> implements Connections<T> {
     }
 
     @Override
-    public boolean send(int connectionId, T msg) {
-        ConnectionHandler<T> connectionHandler = connectionHandlerId.get(connectionId);
+    public boolean send(int connectionId, String msg) {
+        ConnectionHandler<String> connectionHandler = connectionHandlerId.get(connectionId);
         try {
             connectionHandler.send(msg);
             return true;
@@ -44,7 +45,7 @@ public class ConnectionsImpl<T> implements Connections<T> {
     }
 
     @Override
-    public void send(String channel, T msg) { //we shouldn't use this function because it doesn't insert the subscription id into the msg
+    public void send(String channel, String msg) { //we shouldn't use this function because it doesn't insert the subscription id into the msg
         for (Pair<String, String> pair : getConnectionSubId().keySet()) {
             if (pair.second.equals(channel)) {
                 for (Pair<String, Integer> connectionIds : getUserConnectionId()) {
@@ -58,16 +59,19 @@ public class ConnectionsImpl<T> implements Connections<T> {
     }
 
     @Override
-    public void disconnect(int connectionId) {
+    public synchronized void disconnect(int connectionId) {
         String user = "";
+        Pair<String, Integer> remove = null;
         for (Pair<String, Integer> userConnectionIds : userConnectionId) {
             if (userConnectionIds.second == connectionId) {
                 user = userConnectionIds.first;
+                remove = userConnectionIds;
                 break;
             }
         }
+        userConnectionId.remove(remove);
         loggedUsers.remove(user);
-        ConnectionHandler<T> connectionHandler = connectionHandlerId.get(connectionId);
+        ConnectionHandler<String> connectionHandler = connectionHandlerId.get(connectionId);
         try {
             connectionHandler.close();
             connectionHandlerId.remove(connectionId);
@@ -81,7 +85,7 @@ public class ConnectionsImpl<T> implements Connections<T> {
     }
 
     @Override
-    public String tryConnect(String acceptVersion, String username, String passcode, int connectionId) {
+    public synchronized String tryConnect(String acceptVersion, String username, String passcode, int connectionId) {
         String serverVersion = "1.2";
         if (!serverVersion.equals(acceptVersion)) return "Wrong accept-version";
         for (String user : userCredentials.keySet()) {
@@ -107,7 +111,7 @@ public class ConnectionsImpl<T> implements Connections<T> {
 
 
     @Override
-    public void subscribe(String dest, String id, int connectionId) {
+    public synchronized void subscribe(String dest, String id, int connectionId) {
         for (Pair<String, Integer> userConnection : userConnectionId) {
             if (userConnection.second == connectionId) {
                 connectionSubId.put(new Pair<>(userConnection.first, dest), id);
@@ -117,7 +121,7 @@ public class ConnectionsImpl<T> implements Connections<T> {
     }
 
     @Override
-    public void unsubscribe(String id, int connectionId) {
+    public synchronized void unsubscribe(String id, int connectionId) {
         Pair<String, String> remove = null;
         for (Pair<String, String> findToRemove : connectionSubId.keySet()) {
             if (connectionSubId.get(findToRemove).equals(id)) {
@@ -129,7 +133,7 @@ public class ConnectionsImpl<T> implements Connections<T> {
     }
 
     @Override
-    public Map<Integer, ConnectionHandler<T>> getConnectionHandlerId() {
+    public synchronized Map<Integer, ConnectionHandler<String>> getConnectionHandlerId() {
         return connectionHandlerId;
     }
 }

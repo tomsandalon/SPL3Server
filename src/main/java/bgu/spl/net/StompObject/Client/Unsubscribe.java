@@ -5,7 +5,7 @@ import bgu.spl.net.StompObject.StompMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Unsubscribe extends StompMessage implements ClientStompMessage {
+public class Unsubscribe extends StompMessage {
 
     private String id;
 
@@ -25,8 +25,7 @@ public class Unsubscribe extends StompMessage implements ClientStompMessage {
         return getType() + "\nid:" + getId() + "\n";
     }
 
-    @Override
-    public String isValid(String s) {
+    public static String isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
         if (!tempStringArray.get(1).startsWith("id:")) return "id is invalid";
         return "";

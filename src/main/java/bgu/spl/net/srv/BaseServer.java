@@ -8,13 +8,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Supplier;
 
-public abstract class BaseServer<T> implements Server<T> {
+public abstract class BaseServer implements Server<String> {
 
     private final int port;
     private final Supplier<StompMessagingProtocolImpl> protocolFactory;
     private final Supplier<StompMessageEncoderDecoder> encdecFactory;
     private ServerSocket sock;
-    private Connections<T> connections;
+    private Connections<String> connections;
 
     public BaseServer(int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encdecFactory) {
 
@@ -22,11 +22,13 @@ public abstract class BaseServer<T> implements Server<T> {
         this.protocolFactory = protocolFactory;
         this.encdecFactory = encdecFactory;
         this.sock = null;
-        this.connections = new ConnectionsImpl<>();
+        this.connections = new ConnectionsImpl();
     }
 
     @Override
     public void serve() {
+
+        int connectionId;
 
         try (ServerSocket serverSock = new ServerSocket(port)) {
             System.out.println("Server started");
@@ -37,9 +39,13 @@ public abstract class BaseServer<T> implements Server<T> {
 
                 Socket clientSock = serverSock.accept();
 
-                BlockingConnectionHandler<T> handler = new BlockingConnectionHandler<>(clientSock, encdecFactory.get(), protocolFactory.get());
+                BlockingConnectionHandler<String> handler = new BlockingConnectionHandler<>(clientSock, encdecFactory.get(), protocolFactory.get());
 
-                connections.getConnectionHandlerId().put(connections.getAndIncConnectionCounter(), handler);
+                connectionId = connections.getAndIncConnectionCounter();
+
+                handler.getProtocol().start(connectionId, connections);
+
+                connections.getConnectionHandlerId().put(connectionId, handler);
 
                 execute(handler);
             }
@@ -54,7 +60,7 @@ public abstract class BaseServer<T> implements Server<T> {
         if (sock != null) sock.close();
     }
 
-    protected void execute(BlockingConnectionHandler<T> handler) {
+    protected void execute(BlockingConnectionHandler<String> handler) {
         handler.run();
     }
 

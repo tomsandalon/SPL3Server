@@ -1,5 +1,7 @@
 package bgu.spl.net.srv;
 
+import bgu.spl.net.srv.Utils.Pair;
+
 import java.util.List;
 import java.util.Map;
 

@@ -5,7 +5,7 @@ import bgu.spl.net.StompObject.StompMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Disconnect extends StompMessage implements ClientStompMessage {
+public class Disconnect extends StompMessage {
 
     private String receipt;
 
@@ -25,8 +25,7 @@ public class Disconnect extends StompMessage implements ClientStompMessage {
         return getType() + "\nreceipt:" + getReceipt() + "\n";
     }
 
-    @Override
-    public String isValid(String s) {
+    public static String isValid(String s) {
         ArrayList<String> tempStringArray = toArrayList(s);
         if (!tempStringArray.get(1).startsWith("receipt:")) return "Invalid receipt";
         return "";

@@ -6,7 +6,7 @@ public class Error extends StompMessage{
 
     private String receiptID;
     private String message;
-    private StompMessage stompMessage;
+    private String fullMessage;
     private String messageDesc;
 
     public String getReceiptID() {
@@ -17,24 +17,24 @@ public class Error extends StompMessage{
         return message;
     }
 
-    public StompMessage getStompMessage() {
-        return stompMessage;
+    public Error(String receiptID, String message, String fullMessage, String messageDesc) {
+        super("ERROR");
+        this.receiptID = receiptID;
+        this.message = message;
+        this.fullMessage = fullMessage;
+        this.messageDesc = messageDesc;
     }
 
     public String getMessageDesc() {
         return messageDesc;
     }
 
-    public Error(String receiptID, String message, StompMessage stompMessage, String messageDesc) {
-        super("ERROR");
-        this.receiptID = receiptID;
-        this.message = message;
-        this.stompMessage = stompMessage;
-        this.messageDesc = messageDesc;
+    public String getFullMessage() {
+        return stompMessage;
     }
 
     @Override
     public String toString() {
-        return getType() + "\nreceipt-id: " + getReceiptID() + "\nmessage: " + getMessage() + "\n\nThe message:\n-----\n" + stompMessage.toString() + "\n-----\n" + getMessageDesc();
+        return getType() + "\nreceipt-id: " + getReceiptID() + "\nmessage: " + getMessage() + "\n\nThe message:\n-----\n" + fullMessage + "\n-----\n" + getMessageDesc();
     }
 }

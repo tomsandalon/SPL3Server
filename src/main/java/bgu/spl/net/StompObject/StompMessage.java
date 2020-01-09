@@ -24,7 +24,7 @@ public abstract class StompMessage {
     @Override
     public abstract String toString();
 
-    public ArrayList<String> toArrayList(String s) {
+    public static ArrayList<String> toArrayList(String s) {
         return new ArrayList<>(Arrays.asList(s.split("\n")));
     }
 }

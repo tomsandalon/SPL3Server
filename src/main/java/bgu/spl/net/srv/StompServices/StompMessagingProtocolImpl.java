@@ -7,12 +7,14 @@ import bgu.spl.net.StompObject.Server.Message;
 import bgu.spl.net.StompObject.Server.Receipt;
 import bgu.spl.net.api.StompMessagingProtocol;
 import bgu.spl.net.srv.Connections;
-import bgu.spl.net.srv.Pair;
+import bgu.spl.net.srv.Utils.Pair;
+import org.apache.commons.lang3.StringUtils;
 
 public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     private Connections<String> connections;
     private int connectionId;
+
     private boolean shouldTerminate = false;
 
     public static Message generateMessage(Message message, String subscriptionId) {
@@ -26,37 +28,64 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     @Override
     public boolean shouldTerminate() {
-        return false;
+        return shouldTerminate;
     }
 
     @Override
     public void process(String msg) {
         String type = msg.substring(msg.indexOf('\n'));
+        String valid;
         String result;
+        String receipt = StringUtils.substringBefore(StringUtils.substringAfter(msg, "receipt:"), "\n");
         switch (type) {
             case "CONNECT":
                 result = process(new Connect(msg));
                 connections.send(connectionId, result);
                 break;
             case "DISCONNECT":
-                shouldTerminate = true;
-                result = process(new Disconnect(msg));
-                connections.send(connectionId, result);
-                connections.disconnect(connectionId);
+                valid = Disconnect.isValid(msg);
+                if (valid.equals("")) {
+                    shouldTerminate = true;
+                    result = process(new Disconnect(msg));
+                    connections.send(connectionId, result);
+                    connections.disconnect(connectionId);
+                } else {
+                    sendError(valid, receipt, msg);
+                }
                 break;
             case "SEND":
-                process(new Send(msg));
+                valid = Send.isValid(msg);
+                if (valid.equals("")) {
+                    process(new Send(msg));
+                } else {
+                    sendError(valid, receipt, msg);
+                }
                 break;
             case "SUBSCRIBE":
-                process(new Subscribe(msg));
+                valid = Subscribe.isValid(msg);
+                if (valid.equals("")) {
+                    process(new Subscribe(msg));
+                } else {
+                    sendError(valid, receipt, msg);
+                }
                 break;
             case "UNSUBSCRIBE":
-                process(new Unsubscribe(msg));
+                valid = Unsubscribe.isValid(msg);
+                if (valid.equals("")) {
+                    process(new Unsubscribe(msg));
+                } else {
+                    sendError(valid, receipt, msg);
+                }
                 break;
             default:
                 //Error
                 //TODO
         }
+    }
+
+    private void sendError(String valid, String receipt, String msg) {
+        Error error = new Error(receipt, valid, msg, valid);
+        connections.send(connectionId, error.toString());
     }
 
     private String process(Connect connect) {
@@ -65,7 +94,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
             Connected connected = new Connected(connect.getAcceptVersion());
             return connected.toString();
         } else {
-            Error error = new Error("Connect has no receipt id", s, connect, "s");
+            Error error = new Error("Connect has no receipt id", s, connect.toString(), "s");
             return error.toString();
         }
     }
