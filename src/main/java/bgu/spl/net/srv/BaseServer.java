@@ -48,6 +48,8 @@ public abstract class BaseServer implements Server<String> {
                 connections.getConnectionHandlerId().put(connectionId, handler);
 
                 execute(handler);
+
+                //handler.run();
             }
         } catch (IOException ignored) {
         }

@@ -17,7 +17,7 @@ public abstract class StompMessage {
     }
 
     public String getAfterChar(String s, char c) {
-        int loc = s.indexOf(c);
+        int loc = s.indexOf(c) + 1;
         return s.substring(loc);
     }
 

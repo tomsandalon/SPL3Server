@@ -33,7 +33,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     @Override
     public void process(String msg) {
-        String type = msg.substring(msg.indexOf('\n'));
+        String type = msg.substring(0,msg.indexOf('\n'));
         String valid;
         String result;
         String receipt = StringUtils.substringBefore(StringUtils.substringAfter(msg, "receipt:"), "\n");
