@@ -31,6 +31,7 @@ public class Send extends StompMessage {
             } else {
                 msg = msg + "\n";
             }
+            i++;
         }
     }
 

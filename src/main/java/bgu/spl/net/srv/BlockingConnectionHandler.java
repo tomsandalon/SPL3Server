@@ -59,6 +59,8 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     public synchronized void send(T msg) {
         if (protocol.shouldTerminate()) return; //don't send if the thread needs to be closed
         try {
+            //TODO delete this:
+            System.out.println("Sending this message:\n\n" + ((String)msg));
             out.write(encdec.encode((String) msg));
             out.flush();
         } catch (IOException e) {

@@ -118,7 +118,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 for (Pair<String, Integer> connectionIds : connections.getUserConnectionId()) {
                     if (connectionIds.first.equals(pair.first)) {
                         Message m = new Message(connections.getConnectionSubId().get(pair), String.valueOf(connections.getAndIncMsgCounter()), send.getDest(), send.getMsg());
-                        connections.send(pair.second, m.toString());
+                        connections.send(connectionIds.second, m.toString());
                         break;
                     }
                 }

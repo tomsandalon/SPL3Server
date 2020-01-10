@@ -50,7 +50,7 @@ public class ConnectionsImpl implements Connections<String> {
             if (pair.second.equals(channel)) {
                 for (Pair<String, Integer> connectionIds : getUserConnectionId()) {
                     if (connectionIds.first.equals(pair.first)) {
-                        send(pair.second, msg);
+                        send(connectionIds.second, msg);
                         break;
                     }
                 }
