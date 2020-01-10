@@ -57,6 +57,9 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 valid = Send.isValid(msg);
                 if (valid.equals("")) {
                     process(new Send(msg));
+                    if (msg.contains("receipt:")) {
+                        connections.send(connectionId, new Receipt(receipt).toString());
+                    }
                 } else {
                     sendError(valid, receipt, msg);
                 }
@@ -65,6 +68,9 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 valid = Subscribe.isValid(msg);
                 if (valid.equals("")) {
                     process(new Subscribe(msg));
+                    if (msg.contains("receipt:")) {
+                        connections.send(connectionId, new Receipt(receipt).toString());
+                    }
                 } else {
                     sendError(valid, receipt, msg);
                 }
@@ -73,6 +79,9 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 valid = Unsubscribe.isValid(msg);
                 if (valid.equals("")) {
                     process(new Unsubscribe(msg));
+                    if (msg.contains("receipt:")) {
+                        connections.send(connectionId, new Receipt(receipt).toString());
+                    }
                 } else {
                     sendError(valid, receipt, msg);
                 }

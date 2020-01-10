@@ -15,7 +15,7 @@ public class Subscribe extends StompMessage {
         ArrayList<String> tempStringArray = new ArrayList<>();
         tempStringArray.addAll(Arrays.asList(completeMsg.split("\n")));
         dest = getAfterChar(tempStringArray.get(1), ':');
-        id = getAfterChar(tempStringArray.get(1), ':');
+        id = getAfterChar(tempStringArray.get(2), ':');
     }
 
     public String getDest() {
