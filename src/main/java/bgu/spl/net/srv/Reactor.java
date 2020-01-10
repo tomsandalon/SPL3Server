@@ -18,6 +18,7 @@ public class Reactor implements Server {
     private final ConcurrentLinkedQueue<Runnable> selectorTasks = new ConcurrentLinkedQueue<>();
     private Selector selector;
     private Thread selectorThread;
+    Connections<String> connections = new ConnectionsImpl();
 
     public Reactor(
             int numThreads,
@@ -54,8 +55,7 @@ public class Reactor implements Server {
                     if (!key.isValid()) {
                         continue;
                     } else if (key.isAcceptable()) {
-                        handleAccept(serverSock, selector);
-                    } else {
+                        handleAccept(serverSock, selector); } else {
                         handleReadWrite(key);
                     }
                 }
@@ -96,6 +96,8 @@ public class Reactor implements Server {
                 protocolFactory.get(),
                 clientChan,
                 this);
+        int connectionId = connections.getAndIncConnectionCounter();
+        handler.getProtocol().start(connectionId, connections);
         clientChan.register(selector, SelectionKey.OP_READ, handler);
     }
 

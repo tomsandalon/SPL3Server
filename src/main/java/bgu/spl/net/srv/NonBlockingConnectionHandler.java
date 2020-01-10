@@ -21,6 +21,10 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<String> {
     private final SocketChannel chan;
     private final Reactor reactor;
 
+    public StompMessagingProtocol getProtocol() {
+        return protocol;
+    }
+
     public NonBlockingConnectionHandler(
             StompMessageEncoderDecoder reader,
             StompMessagingProtocol protocol,
