@@ -10,7 +10,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
+public class NonBlockingConnectionHandler implements ConnectionHandler<String> {
 
     private static final int BUFFER_ALLOCATION_SIZE = 1 << 13; //8k
     private static final ConcurrentLinkedQueue<ByteBuffer> BUFFER_POOL = new ConcurrentLinkedQueue<>();
@@ -61,16 +61,10 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
             return () -> {
                 try {
                     while (buf.hasRemaining()) {
-                        /*
-                        T nextMessage = encdec.decodeNextByte(buf.get());
+                        String nextMessage = encdec.decodeNextByte(buf.get());
                         if (nextMessage != null) {
-                            T response = protocol.process(nextMessage);
-                            if (response != null) {
-                                writeQueue.add(ByteBuffer.wrap(encdec.encode(response)));
-                                reactor.updateInterestedOps(chan, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-                            }
+                            protocol.process(nextMessage);
                         }
-                        */
                     }
                 } finally {
                     releaseBuffer(buf);
@@ -81,7 +75,15 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
             close();
             return null;
         }
+    }
 
+
+    @Override
+    public void send(String msg) {
+        if (msg != null) {
+            writeQueue.add(ByteBuffer.wrap(encdec.encode(msg)));
+            reactor.updateInterestedOps(chan, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        }
     }
 
     public void close() {
@@ -116,10 +118,5 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
             if (protocol.shouldTerminate()) close();
             else reactor.updateInterestedOps(chan, SelectionKey.OP_READ);
         }
-    }
-
-    @Override
-    public void send(T msg) {
-        //IMPLEMENT IF NEEDED
     }
 }

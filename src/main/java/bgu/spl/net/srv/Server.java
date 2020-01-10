@@ -1,12 +1,13 @@
 package bgu.spl.net.srv;
 
+import bgu.spl.net.api.StompMessagingProtocol;
 import bgu.spl.net.srv.StompServices.StompMessageEncoderDecoder;
 import bgu.spl.net.srv.StompServices.StompMessagingProtocolImpl;
 
 import java.io.Closeable;
 import java.util.function.Supplier;
 
-public interface Server<T> extends Closeable {
+public interface Server extends Closeable {
 
     /**
      * This function returns a new instance of a thread per client pattern server
@@ -14,10 +15,9 @@ public interface Server<T> extends Closeable {
      * @param port                  The port for the server socket
      * @param protocolFactory       A factory that creats new MessagingProtocols
      * @param encoderDecoderFactory A factory that creats new MessageEncoderDecoder
-     *
      * @return A new Thread per client server
      */
-    public static Server<String> threadPerClient(int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
+    public static Server threadPerClient(int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
 
         return new BaseServer(port, protocolFactory, encoderDecoderFactory) {
             @Override
@@ -38,9 +38,8 @@ public interface Server<T> extends Closeable {
      * @param <T>                   The Message Object for the protocol
      * @return A new reactor server
      */
-    public static <T> Server<T> reactor(int nthreads, int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
-        return null; //TODO this is temp
-        //new Reactor<T>(nthreads, port, protocolFactory, encoderDecoderFactory);
+    public static Server reactor(int nthreads, int port, Supplier<StompMessagingProtocol> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
+        return new Reactor(nthreads, port, protocolFactory, encoderDecoderFactory);
     }
 
     /**

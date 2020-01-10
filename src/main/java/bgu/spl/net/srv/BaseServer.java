@@ -8,7 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Supplier;
 
-public abstract class BaseServer implements Server<String> {
+public abstract class BaseServer implements Server {
 
     private final int port;
     private final Supplier<StompMessagingProtocolImpl> protocolFactory;

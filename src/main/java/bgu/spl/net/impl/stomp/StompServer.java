@@ -16,7 +16,12 @@ public class StompServer {
                     StompMessagingProtocolImpl::new, //protocol factory
                     StompMessageEncoderDecoder::new).serve(); //message encoder decoder factory
         } else if (args[1].equals("reactor")) {
-            //Server.reactor()
+            Server.reactor(
+                    Runtime.getRuntime().availableProcessors(),
+                    7777, //port
+                    StompMessagingProtocolImpl::new, //protocol factory
+                    StompMessageEncoderDecoder::new //message encoder decoder factory
+            ).serve();
         } else throw new Exception("Server type is invalid");
     }
 }
