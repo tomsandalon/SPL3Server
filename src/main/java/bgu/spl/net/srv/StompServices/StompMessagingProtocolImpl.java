@@ -45,9 +45,9 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
             case "DISCONNECT":
                 valid = Disconnect.isValid(msg);
                 if (valid.equals("")) {
-                    shouldTerminate = true;
                     result = process(new Disconnect(msg));
                     connections.send(connectionId, result);
+                    shouldTerminate = true;
                     connections.disconnect(connectionId);
                 } else {
                     sendError(valid, receipt, msg);
