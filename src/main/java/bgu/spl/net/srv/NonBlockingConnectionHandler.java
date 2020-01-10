@@ -61,6 +61,7 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
             return () -> {
                 try {
                     while (buf.hasRemaining()) {
+                        /*
                         T nextMessage = encdec.decodeNextByte(buf.get());
                         if (nextMessage != null) {
                             T response = protocol.process(nextMessage);
@@ -69,6 +70,7 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
                                 reactor.updateInterestedOps(chan, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
                             }
                         }
+                        */
                     }
                 } finally {
                     releaseBuffer(buf);
