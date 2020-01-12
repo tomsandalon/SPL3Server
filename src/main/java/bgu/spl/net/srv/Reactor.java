@@ -55,7 +55,8 @@ public class Reactor implements Server {
                     if (!key.isValid()) {
                         continue;
                     } else if (key.isAcceptable()) {
-                        handleAccept(serverSock, selector); } else {
+                        handleAccept(serverSock, selector); }
+                    else {
                         handleReadWrite(key);
                     }
                 }

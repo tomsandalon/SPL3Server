@@ -15,6 +15,14 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
     private Connections<String> connections;
     private int connectionId;
 
+    public int getConnectionId() {
+        return connectionId;
+    }
+
+    public Connections<String> getConnections() {
+        return connections;
+    }
+
     private boolean shouldTerminate = false;
 
     public static Message generateMessage(Message message, String subscriptionId) {

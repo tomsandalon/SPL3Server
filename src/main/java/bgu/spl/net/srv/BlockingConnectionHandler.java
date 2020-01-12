@@ -2,6 +2,7 @@ package bgu.spl.net.srv;
 
 import bgu.spl.net.api.StompMessagingProtocol;
 import bgu.spl.net.srv.StompServices.StompMessageEncoderDecoder;
+import bgu.spl.net.srv.StompServices.StompMessagingProtocolImpl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -14,14 +15,14 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         return protocol;
     }
 
-    private final StompMessagingProtocol protocol;
+    private final StompMessagingProtocolImpl protocol;
     private final StompMessageEncoderDecoder encdec;
     private final Socket sock;
     private BufferedInputStream in;
     private BufferedOutputStream out;
     private volatile boolean connected = true;
 
-    public BlockingConnectionHandler(Socket sock, StompMessageEncoderDecoder reader, StompMessagingProtocol protocol) {
+    public BlockingConnectionHandler(Socket sock, StompMessageEncoderDecoder reader, StompMessagingProtocolImpl protocol) {
         this.sock = sock;
         this.encdec = reader;
         this.protocol = protocol;
@@ -46,12 +47,21 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         } finally {
             synchronized (this) { //just so we wouldn't exit while sending a message
             }
+            try {
+                close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public void close() throws IOException {
         connected = false;
+        try{
+            protocol.getConnections().disconnect(protocol.getConnectionId());
+        }
+        catch (Exception ignored){}
         sock.close();
     }
 
@@ -59,7 +69,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     public synchronized void send(T msg) {
         if (protocol.shouldTerminate()) return; //don't send if the thread needs to be closed
         try {
-            //TODO delete this:
+            //TODO delete this before submission:
             System.out.println("Sending this message:\n\n" + ((String)msg));
             out.write(encdec.encode((String) msg));
             out.flush();

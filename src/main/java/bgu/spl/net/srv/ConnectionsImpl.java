@@ -73,7 +73,6 @@ public class ConnectionsImpl implements Connections<String> {
         loggedUsers.remove(user);
         ConnectionHandler<String> connectionHandler = connectionHandlerId.get(connectionId);
         try {
-            connectionHandler.close();
             connectionHandlerId.remove(connectionId);
         } catch (Exception ignore) {
         } //TODO
