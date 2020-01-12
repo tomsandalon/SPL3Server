@@ -1,7 +1,7 @@
 package bgu.spl.net.srv;
 
-import bgu.spl.net.api.StompMessagingProtocol;
 import bgu.spl.net.srv.StompServices.StompMessageEncoderDecoder;
+import bgu.spl.net.srv.StompServices.StompMessagingProtocolImpl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class Reactor implements Server {
 
     private final int port;
-    private final Supplier<StompMessagingProtocol> protocolFactory;
+    private final Supplier<StompMessagingProtocolImpl> protocolFactory;
     private final Supplier<StompMessageEncoderDecoder> readerFactory;
     private final ActorThreadPool pool;
     private final ConcurrentLinkedQueue<Runnable> selectorTasks = new ConcurrentLinkedQueue<>();
@@ -23,7 +23,7 @@ public class Reactor implements Server {
     public Reactor(
             int numThreads,
             int port,
-            Supplier<StompMessagingProtocol> protocolFactory,
+            Supplier<StompMessagingProtocolImpl> protocolFactory,
             Supplier<StompMessageEncoderDecoder> readerFactory) {
 
         this.pool = new ActorThreadPool(numThreads);
@@ -55,7 +55,8 @@ public class Reactor implements Server {
                     if (!key.isValid()) {
                         continue;
                     } else if (key.isAcceptable()) {
-                        handleAccept(serverSock, selector); }
+                        handleAccept(serverSock, selector);
+                    }
                     else {
                         handleReadWrite(key);
                     }
@@ -99,6 +100,7 @@ public class Reactor implements Server {
                 this);
         int connectionId = connections.getAndIncConnectionCounter();
         handler.getProtocol().start(connectionId, connections);
+        connections.getConnectionHandlerId().put(connectionId, handler);
         clientChan.register(selector, SelectionKey.OP_READ, handler);
     }
 

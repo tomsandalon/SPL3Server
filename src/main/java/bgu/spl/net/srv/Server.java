@@ -1,6 +1,5 @@
 package bgu.spl.net.srv;
 
-import bgu.spl.net.api.StompMessagingProtocol;
 import bgu.spl.net.srv.StompServices.StompMessageEncoderDecoder;
 import bgu.spl.net.srv.StompServices.StompMessagingProtocolImpl;
 
@@ -17,7 +16,7 @@ public interface Server extends Closeable {
      * @param encoderDecoderFactory A factory that creats new MessageEncoderDecoder
      * @return A new Thread per client server
      */
-    public static Server threadPerClient(int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
+    static Server threadPerClient(int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
 
         return new BaseServer(port, protocolFactory, encoderDecoderFactory) {
             @Override
@@ -35,10 +34,9 @@ public interface Server extends Closeable {
      * @param port                  The port for the server socket
      * @param protocolFactory       A factory that creats new MessagingProtocols
      * @param encoderDecoderFactory A factory that creats new MessageEncoderDecoder
-     * @param <T>                   The Message Object for the protocol
      * @return A new reactor server
      */
-    public static Server reactor(int nthreads, int port, Supplier<StompMessagingProtocol> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
+    static Server reactor(int nthreads, int port, Supplier<StompMessagingProtocolImpl> protocolFactory, Supplier<StompMessageEncoderDecoder> encoderDecoderFactory) {
         return new Reactor(nthreads, port, protocolFactory, encoderDecoderFactory);
     }
 

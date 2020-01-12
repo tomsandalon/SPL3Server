@@ -45,6 +45,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
         String valid;
         String result;
         String receipt = StringUtils.substringBefore(StringUtils.substringAfter(msg, "receipt:"), "\n");
+        if (shouldTerminate()) return;
         switch (type) {
             case "CONNECT":
                 result = process(new Connect(msg));
