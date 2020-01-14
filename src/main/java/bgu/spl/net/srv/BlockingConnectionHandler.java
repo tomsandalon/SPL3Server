@@ -46,11 +46,11 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
             ex.printStackTrace();
         } finally {
             synchronized (this) { //just so we wouldn't exit while sending a message
-            }
-            try {
-                close();
-            } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
