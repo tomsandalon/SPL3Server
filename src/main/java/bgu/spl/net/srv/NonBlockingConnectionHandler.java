@@ -93,7 +93,9 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<String> {
 
     public void close() {
         try {
-            protocol.getConnections().disconnect(protocol.getConnectionId());
+            if (!protocol.shouldTerminate()) {
+                protocol.getConnections().disconnect(protocol.getConnectionId());
+            }
             chan.close();
         } catch (IOException ex) {
             ex.printStackTrace();

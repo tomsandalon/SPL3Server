@@ -59,7 +59,9 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     public void close() throws IOException {
         connected = false;
         try{
-            protocol.getConnections().disconnect(protocol.getConnectionId());
+            if (!protocol.shouldTerminate()) {
+                protocol.getConnections().disconnect(protocol.getConnectionId());
+            }
         }
         catch (Exception ignored){}
         sock.close();
