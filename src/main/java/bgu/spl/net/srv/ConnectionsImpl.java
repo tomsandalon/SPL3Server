@@ -118,11 +118,20 @@ public class ConnectionsImpl implements Connections<String> {
         }
     }
 
+    private String findUserNameByConnectionId(int connectionId) {
+        for (Pair<String, Integer> pair : userConnectionId) {
+            if (pair.second == connectionId)
+                return pair.first;
+        }
+        return null;
+    }
+
     @Override
     public synchronized void unsubscribe(String id, int connectionId) {
         Pair<String, String> remove = null;
         for (Pair<String, String> findToRemove : connectionSubId.keySet()) {
-            if (connectionSubId.get(findToRemove).equals(id)) {
+            String username = findUserNameByConnectionId(connectionId);
+            if (connectionSubId.get(findToRemove).equals(id) && findToRemove.first.equals(username)) {
                 remove = findToRemove;
                 break;
             }
